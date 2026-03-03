@@ -1,0 +1,9 @@
+{
+  "newUser": {
+    "firstName": "Test",
+    "lastName": "User",
+    "username": "testuser_auto",
+    "password": "Test1234!",
+    "confirmPassword": "Test1234!"
+  }
+}
