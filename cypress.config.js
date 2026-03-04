@@ -31,7 +31,17 @@ module.exports = defineConfig({
               },
               (res) => {
                 res.resume();
-                res.on("end", () => resolve(null));
+                res.on("end", () => {
+                  if (res.statusCode >= 200 && res.statusCode < 300) {
+                    resolve(null);
+                  } else {
+                    reject(
+                      new Error(
+                        `resetLikes: /testData/seed responded with ${res.statusCode}`
+                      )
+                    );
+                  }
+                });
               }
             );
             req.on("error", reject);
