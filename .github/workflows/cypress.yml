@@ -1,0 +1,57 @@
+name: Cypress E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout test repo
+        uses: actions/checkout@v4
+
+      - name: Checkout RWA app
+        uses: actions/checkout@v4
+        with:
+          repository: cypress-io/cypress-realworld-app
+          path: cypress-realworld-app
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install RWA dependencies
+        working-directory: cypress-realworld-app
+        run: yarn install --frozen-lockfile
+
+      - name: Start RWA app
+        working-directory: cypress-realworld-app
+        run: yarn start &
+        env:
+          SEED_DEFAULT_USER_PASSWORD: s3cret
+          PORT: 3000
+          VITE_BACKEND_PORT: 3001
+
+      - name: Install test dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          wait-on: "http://localhost:3000, http://localhost:3001"
+          wait-on-timeout: 60
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_validUsername: ${{ secrets.CYPRESS_VALID_USERNAME }}
+          CYPRESS_validPassword: ${{ secrets.CYPRESS_VALID_PASSWORD }}
+          CYPRESS_invalidUsername: invalid_user
+          CYPRESS_invalidPassword: wrongpassword
