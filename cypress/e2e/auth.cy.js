@@ -62,6 +62,36 @@ describe("Authentication", () => {
     LoginPage.submitBtn().should("be.disabled");
   });
 
+  it("TC-AUTH-009: Access protected page without auth", () => {
+    // Start unauthenticated — clear any existing session
+    cy.clearCookies();
+
+    // Try to navigate directly to a protected route (new transaction = RWA equivalent of "new article")
+    cy.visit("/transaction/new");
+
+    // Redirected to /signin — protected route not accessible
+    cy.url().should("include", "/signin");
+
+    // Protected content not visible
+    cy.getBySel("nav-top-new-transaction").should("not.exist");
+  });
+
+  it("TC-AUTH-010: Session persistence after page refresh", () => {
+    // UI login required (loginByApi cookie is on :3001, not seen by :3000 frontend)
+    LoginPage.visit();
+    LoginPage.fillAndSubmit(Cypress.env("validUsername"), Cypress.env("validPassword"));
+    cy.url().should("eq", `${Cypress.config("baseUrl")}/`);
+
+    // Refresh the page
+    cy.reload();
+
+    // User remains logged in — session cookie still present
+    cy.getCookie("connect.sid").should("exist");
+
+    // Username still visible in navbar
+    cy.getBySel("sidenav-username").should("contain", Cypress.env("validUsername"));
+  });
+
   it("TC-AUTH-008: Successful logout", () => {
     // UI login required — loginByApi sets cookie on localhost:3001 (backend),
     // which the frontend (localhost:3000) does not receive on cy.visit
