@@ -1,4 +1,5 @@
 const { defineConfig } = require("cypress");
+const http = require("http");
 
 module.exports = defineConfig({
   projectId: "25hpzw",
@@ -16,6 +17,27 @@ module.exports = defineConfig({
     screenshotOnRunFailure: true,
     specPattern: "cypress/e2e/**/*.cy.js",
     supportFile: "cypress/support/e2e.js",
-    setupNodeEvents() {},
+    setupNodeEvents(on) {
+      on("task", {
+        resetLikes() {
+          return new Promise((resolve, reject) => {
+            const req = http.request(
+              {
+                hostname: "localhost",
+                port: 3001,
+                path: "/testData/seed",
+                method: "POST",
+              },
+              (res) => {
+                res.resume();
+                res.on("end", () => resolve(null));
+              }
+            );
+            req.on("error", reject);
+            req.end();
+          });
+        },
+      });
+    },
   },
 });

@@ -9,28 +9,29 @@ Cypress.Commands.add("getBySel", (selector) => {
 });
 
 /**
- * Login via API + cy.session (best practice - bypasses UI for non-auth tests)
- * Usage: cy.loginByApi()  or  cy.loginByApi("username", "password")
+ * Login via UI + cy.session (cached — fast after first run)
+ * Note: cy.request to :3001 does not share cookies with :3000 frontend,
+ * so UI login through :3000 is required.
+ * Usage: cy.loginByUI()  or  cy.loginByUI("username", "password")
  */
-Cypress.Commands.add("loginByApi", (username, password) => {
+Cypress.Commands.add("loginByUI", (username, password) => {
   const user = username ?? Cypress.env("validUsername");
   const pass = password ?? Cypress.env("validPassword");
 
   cy.session(
-    ["api", user, pass],
+    ["ui", user, pass],
     () => {
-      cy.request({
-        method: "POST",
-        url: `${Cypress.env("apiUrl")}/login`,
-        body: { username: user, password: pass },
-      }).then((res) => {
-        expect(res.status).to.eq(200);
-      });
+      cy.visit("/signin");
+      cy.getBySel("signin-username").type(user);
+      cy.getBySel("signin-password").type(pass);
+      cy.getBySel("signin-submit").click();
+      cy.url().should("eq", `${Cypress.config("baseUrl")}/`);
     },
     {
       cacheAcrossSpecs: true,
       validate() {
-        cy.request(`${Cypress.env("apiUrl")}/checkAuth`).its("status").should("eq", 200);
+        cy.visit("/");
+        cy.url().should("eq", `${Cypress.config("baseUrl")}/`);
       },
     }
   );
