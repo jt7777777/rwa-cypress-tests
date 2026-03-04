@@ -7,6 +7,7 @@ module.exports = defineConfig({
     baseUrl: "http://localhost:3000",
     env: {
       apiUrl: "http://localhost:3001",
+      recipientUsername: "Arvilla_Hegmann",
     },
     viewportWidth: 1280,
     viewportHeight: 720,
