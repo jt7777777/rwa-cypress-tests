@@ -1,10 +1,22 @@
 // Custom commands for RWA (Real World App)
 
+export type NavSection = "home" | "payment" | "transactions" | "notifications" | "account";
+
+declare global {
+  namespace Cypress {
+    interface Chainable<Subject = any> {
+      getBySel(selector: string): Chainable<JQuery<HTMLElement>>;
+      loginByUI(username?: string, password?: string): void;
+      navigateTo(section: NavSection): void;
+    }
+  }
+}
+
 /**
  * Get element by data-test attribute
  * Usage: cy.getBySel("signin-username")
  */
-Cypress.Commands.add("getBySel", (selector) => {
+Cypress.Commands.add("getBySel", (selector: string) => {
   return cy.get(`[data-test=${selector}]`);
 });
 
@@ -14,7 +26,7 @@ Cypress.Commands.add("getBySel", (selector) => {
  * so UI login through :3000 is required.
  * Usage: cy.loginByUI()  or  cy.loginByUI("username", "password")
  */
-Cypress.Commands.add("loginByUI", (username, password) => {
+Cypress.Commands.add("loginByUI", (username?: string, password?: string) => {
   const user = username ?? Cypress.env("validUsername");
   const pass = password ?? Cypress.env("validPassword");
 
@@ -41,8 +53,8 @@ Cypress.Commands.add("loginByUI", (username, password) => {
  * Navigate to a specific section via sidebar
  * Usage: cy.navigateTo("home" | "payment" | "transactions" | "notifications" | "account")
  */
-Cypress.Commands.add("navigateTo", (section) => {
-  const navMap = {
+Cypress.Commands.add("navigateTo", (section: NavSection) => {
+  const navMap: Record<NavSection, string> = {
     home: "nav-home",
     payment: "nav-top-new-transaction",
     transactions: "nav-personal-tab",

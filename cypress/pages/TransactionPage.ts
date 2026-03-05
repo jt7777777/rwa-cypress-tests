@@ -17,8 +17,7 @@ const TransactionPage = {
   descriptionValidationError: () => cy.get("#transaction-create-description-input-helper-text"),
 
   // Transaction list & detail
-  transactionItem: (index = 0) =>
-    cy.get('[data-test^="transaction-item"]').eq(index),
+  transactionItem: (index = 0) => cy.get('[data-test^="transaction-item"]').eq(index),
   likeBtn: () => cy.get('[data-test^="transaction-like-button"]'),
   likeCount: () => cy.get('[data-test^="transaction-like-count"]'),
 
@@ -28,16 +27,16 @@ const TransactionPage = {
   successMessage: () => cy.get("h2"),
 
   // Actions
-  searchUser: (query) => {
+  searchUser: (query: string) => {
     TransactionPage.userSearch().type(query, { force: true });
   },
   selectFirstUser: () => {
     TransactionPage.userListItem(0).click();
   },
-  fillAmount: (amount) => {
+  fillAmount: (amount: string) => {
     TransactionPage.amountInput().type(amount);
   },
-  fillDescription: (desc) => {
+  fillDescription: (desc: string) => {
     TransactionPage.descriptionInput().type(desc);
   },
   submitPayment: () => {
