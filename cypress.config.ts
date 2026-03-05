@@ -1,7 +1,7 @@
-const { defineConfig } = require("cypress");
-const http = require("http");
+import { defineConfig } from "cypress";
+import http from "http";
 
-module.exports = defineConfig({
+export default defineConfig({
   projectId: "25hpzw",
   e2e: {
     baseUrl: "http://localhost:3000",
@@ -16,11 +16,11 @@ module.exports = defineConfig({
     responseTimeout: 10000,
     video: false,
     screenshotOnRunFailure: true,
-    specPattern: "cypress/e2e/**/*.cy.js",
-    supportFile: "cypress/support/e2e.js",
+    specPattern: "cypress/e2e/**/*.cy.ts",
+    supportFile: "cypress/support/e2e.ts",
     setupNodeEvents(on) {
       on("task", {
-        resetLikes() {
+        resetLikes(): Promise<null> {
           return new Promise((resolve, reject) => {
             const req = http.request(
               {
@@ -32,7 +32,7 @@ module.exports = defineConfig({
               (res) => {
                 res.resume();
                 res.on("end", () => {
-                  if (res.statusCode >= 200 && res.statusCode < 300) {
+                  if (res.statusCode! >= 200 && res.statusCode! < 300) {
                     resolve(null);
                   } else {
                     reject(

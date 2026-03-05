@@ -10,12 +10,12 @@ const LoginPage = {
   passwordError: () => cy.getBySel("signin-password").find("p"),
 
   // Actions
-  fillUsername: (val) => LoginPage.username().type(val),
-  fillPassword: (val) => LoginPage.password().type(val),
+  fillUsername: (val: string) => LoginPage.username().type(val),
+  fillPassword: (val: string) => LoginPage.password().type(val),
   submit: () => LoginPage.submitBtn().click(),
-  touchField: (field) => field().find("input").focus().blur(),
+  touchField: (field: () => Cypress.Chainable) => field().find("input").focus().blur(),
 
-  fillAndSubmit: (username, password) => {
+  fillAndSubmit: (username: string, password: string) => {
     LoginPage.fillUsername(username);
     LoginPage.fillPassword(password);
     LoginPage.submit();
