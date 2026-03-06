@@ -43,6 +43,9 @@ jobs:
       - name: Install test dependencies
         run: npm ci
 
+      - name: TypeScript type check
+        run: npm run typecheck
+
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
