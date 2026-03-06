@@ -1,3 +1,10 @@
+interface RegisterFormData {
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+}
+
 const RegisterPage = {
   visit: () => cy.visit("/signup"),
 
@@ -10,14 +17,14 @@ const RegisterPage = {
   submitBtn: () => cy.getBySel("signup-submit"),
 
   // Actions
-  fillFirstName: (val) => RegisterPage.firstName().type(val),
-  fillLastName: (val) => RegisterPage.lastName().type(val),
-  fillUsername: (val) => RegisterPage.username().type(val),
-  fillPassword: (val) => RegisterPage.password().type(val),
-  fillConfirmPassword: (val) => RegisterPage.confirmPassword().type(val),
+  fillFirstName: (val: string) => RegisterPage.firstName().type(val),
+  fillLastName: (val: string) => RegisterPage.lastName().type(val),
+  fillUsername: (val: string) => RegisterPage.username().type(val),
+  fillPassword: (val: string) => RegisterPage.password().type(val),
+  fillConfirmPassword: (val: string) => RegisterPage.confirmPassword().type(val),
   submit: () => RegisterPage.submitBtn().click(),
 
-  fillAndSubmit: ({ firstName, lastName, username, password }) => {
+  fillAndSubmit: ({ firstName, lastName, username, password }: RegisterFormData) => {
     RegisterPage.fillFirstName(firstName);
     RegisterPage.fillLastName(lastName);
     RegisterPage.fillUsername(username);
